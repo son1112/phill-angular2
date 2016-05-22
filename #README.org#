@@ -176,6 +176,8 @@
 
 * Styles
 
+  [[Dev]]
+
   #+NAME: styles.css
   #+begin_src css :tangle styles.css :padline no
     h1 {
@@ -263,4 +265,7 @@
 
   5. Build and run the app
 
+     : npm start
+
+     
   

@@ -3,7 +3,10 @@
 <div id="text-table-of-contents">
 <ul>
 <li><a href="#sec-1">1. Config</a></li>
-<li><a href="#sec-2">2. Dev</a></li>
+<li><a href="#sec-2">2. App</a></li>
+<li><a href="#sec-3">3. Template</a></li>
+<li><a href="#sec-4">4. Styles</a></li>
+<li><a href="#sec-5">5. Dev</a></li>
 </ul>
 </div>
 </div>
@@ -11,6 +14,8 @@
 **Prairie Hill Learning Center**
 
 # Config<a id="sec-1" name="sec-1"></a>
+
+5
 
     {
       "name": "phill-angular2",
@@ -116,7 +121,63 @@
       System.config(config);
     })(this);
 
-# Dev<a id="sec-2" name="sec-2"></a>
+# App<a id="sec-2" name="sec-2"></a>
+
+5
+
+    import { Component } from '@angular/core';
+    
+    @Component({
+      selector: 'my-app',
+      template: '<h1>My First Angular 2 App</h1>'
+    })
+    
+    export class AppComponent { }
+
+    import { bootstrap }    from '@angular/platform-browser-dynamic';
+    
+    import { AppComponent } from './app.component';
+    
+    bootstrap(AppComponent);
+
+# Template<a id="sec-3" name="sec-3"></a>
+
+    <html>
+      <head>
+        <title>Prairie Hill Learning Center</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="styles.css">
+        <!-- 1. Load libraries -->
+         <!-- Polyfill(s) for older browsers -->
+        <script src="node_modules/core-js/client/shim.min.js"></script>
+        <script src="node_modules/zone.js/dist/zone.js"></script>
+        <script src="node_modules/reflect-metadata/Reflect.js"></script>
+        <script src="node_modules/systemjs/dist/system.src.js"></script>
+        <!-- 2. Configure SystemJS -->
+        <script src="systemjs.config.js"></script>
+        <script>
+          System.import('app').catch(function(err){ console.error(err); });
+        </script>
+      </head>
+      <!-- 3. Display the application -->
+      <body>
+        <my-app>Loading...</my-app>
+      </body>
+    </html>
+
+# Styles<a id="sec-4" name="sec-4"></a>
+
+    h1 {
+      color: #369;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 250%;
+    }
+    body {
+      margin: 2em;
+    }
+
+# Dev<a id="sec-5" name="sec-5"></a>
 
 <https://angular.io/docs/js/latest/quickstart.html>
 
@@ -126,13 +187,15 @@ Angular2 is written with TypeScript(ES6). This is the future.
 
 <https://angular.io/docs/ts/latest/quickstart.html>
 
-1.  Create teh app's project folder and define package dependencies and special
+1.  Create the app's project folder and define package dependencies and special
     project setup
     1.  Create the project folder
         
         You are in [it](./).
     
     2.  Add package definitiion and configuration files
+        
+        1
         
         1
         2
@@ -161,9 +224,33 @@ Angular2 is written with TypeScript(ES6). This is the future.
             -   [ ] phill-angular2@1.0.0 No repository field.
 
 2.  Create the app's Angular root component
+    
+    ---
+    
+    1 / 2
+    
+    ---
+    
+    app/5
+    
+    Structure of every component:
+    
+    ---
+    
+    -   One or more statments to reference the things we need.
+    -   A that tells Angular what template to use and how to
+        create the component.
+    -   A that controls the appearance and behavior of a view 
+        through its template.
 
-3.  Add , identifying the root component to Angular
+3.  Add 6, identifying the root component to Angular
+    
+    2
+    
+    app/6
 
-4.  Add , the web page that hosts the application
+4.  Add 7, the web page that hosts the application
+    
+    3
 
 5.  Build and run the app
