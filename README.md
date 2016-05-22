@@ -6,7 +6,11 @@
 <li><a href="#sec-2">2. App</a></li>
 <li><a href="#sec-3">3. Template</a></li>
 <li><a href="#sec-4">4. Styles</a></li>
-<li><a href="#sec-5">5. Dev</a></li>
+<li><a href="#sec-5">5. Dev</a>
+<ul>
+<li><a href="#sec-5-1">5.1. Tutorials</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -123,16 +127,61 @@
 
 # App<a id="sec-2" name="sec-2"></a>
 
-5
+5 / 4 / 3 / Index
 
     import { Component } from '@angular/core';
     
+    export class Page {
+        id: number;
+        title: string;
+    }
+    
     @Component({
-      selector: 'my-app',
-      template: '<h1>My First Angular 2 App</h1>'
+        selector: 'my-app',
+    
+        template:`
+        <h1>{{title}}</h1>
+        <h2>My Pages</h2>
+        <ul class="pages">
+          <li *ngFor="let page of pages"
+            [class.selected]="page === selectedPage"
+            (click)="onSelect(page)">
+            <span class="badge">{{page.id}}</span> {{page.title}}
+          </li>
+        </ul>
+        <div *ngIf="selectedPage">
+          <h2>{{selectedPage.name}} details!</h2>
+          <div><label>id: </label>{{selectedPage.id}}</div>
+          <div>
+            <label>title: </label>
+            <input [(ngModel)]="selectedPage.name" placeholder="title"/>
+          </div>
+        </div>
+      `
     })
     
-    export class AppComponent { }
+    export class AppComponent {
+        title = 'Prairie Hill Learning Center';
+        pages = PAGES;
+        selectedPage: Page;
+    
+        onSelect(page: Page) { this.selectedPage = page; }
+    }
+    
+    var PAGES: Page[] = [
+        { "id": 1,  "title": "Home"       },
+        { "id": 2,  "title": "About"      },
+        { "id": 3,  "title": "Programs"   },
+        { "id": 4,  "title": "Tours"      },
+        { "id": 5,  "title": "Staff"      },
+        { "id": 6,  "title": "Calendar"   },
+        { "id": 7,  "title": "Employment" },
+        { "id": 8,  "title": "Donate"     },
+        { "id": 9,  "title": "Contact"    },
+        { "id": 10, "title": "Events"     }
+    ];
+
+/
 
     import { bootstrap }    from '@angular/platform-browser-dynamic';
     
@@ -142,22 +191,30 @@
 
 # Template<a id="sec-3" name="sec-3"></a>
 
+2 /
+
     <html>
       <head>
         <title>Prairie Hill Learning Center</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!--<link rel="stylesheet" href="css/pure-release-0.6.0/pure-min.css">-->
         <link rel="stylesheet" href="styles.css">
+        <link href='//fonts.googleapis.com/css?family=Lobster|Roboto:400,100,100italic,700italic,700|Clicker+Script|Kaushan+Script|News+Cycle:400,700|BenchNine|Poiret+One|Open+Sans+Condensed:300|Playball|Shadows+Into+Light+Two' rel='stylesheet' type='text/css'>
+    
         <!-- 1. Load libraries -->
          <!-- Polyfill(s) for older browsers -->
         <script src="node_modules/core-js/client/shim.min.js"></script>
         <script src="node_modules/zone.js/dist/zone.js"></script>
         <script src="node_modules/reflect-metadata/Reflect.js"></script>
         <script src="node_modules/systemjs/dist/system.src.js"></script>
+    
+        <!--<script src="https://www.gstatic.com/firebasejs/3.0.0/firebase.js"></script>-->
+    
         <!-- 2. Configure SystemJS -->
         <script src="systemjs.config.js"></script>
         <script>
-          System.import('app').catch(function(err){ console.error(err); });
+         System.import('app').catch(function(err){ console.error(err); });
         </script>
       </head>
       <!-- 3. Display the application -->
@@ -167,6 +224,8 @@
     </html>
 
 # Styles<a id="sec-4" name="sec-4"></a>
+
+5 / 2
 
     h1 {
       color: #369;
@@ -254,3 +313,9 @@ Angular2 is written with TypeScript(ES6). This is the future.
     3
 
 5.  Build and run the app
+    
+        npm start
+
+## Tutorials<a id="sec-5-1" name="sec-5-1"></a>
+
+5
