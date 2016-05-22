@@ -1,31 +1,23 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
-export class Page {
-    id: number;
-    title: string;
-}
+import { Page } from './page';
+import { PageDetailComponent } from './page-detail.component';
+import { PageService } from './page.service';
 
 @Component({
     selector: 'my-app',
-
     template:`
-    <h1>{{title}}</h1>
-    <h2>My Pages</h2>
-    <ul class="pages">
-      <li *ngFor="let page of pages"
-        [class.selected]="page === selectedPage"
-        (click)="onSelect(page)">
-        <span class="badge">{{page.id}}</span> {{page.title}}
-      </li>
-    </ul>
-    <div *ngIf="selectedPage">
-      <h2>{{selectedPage.title}} details!</h2>
-      <div><label>id: </label>{{selectedPage.id}}</div>
-      <div>
-        <label>title: </label>
-        <input [(ngModel)]="selectedPage.title" placeholder="title"/>
-      </div>
-    </div>
+        <h1>{{title}}</h1>
+        <h2>Menu</h2>
+        <ul class="pages">
+          <li *ngFor="let page of pages"
+            [class.selected]="page === selectedPage"
+            (click)="onSelect(page)">
+            <span class="badge">{{page.id}}</span> {{page.title}}
+          </li>
+        </ul>
+
+        <my-page-detail [page]="selectedPage"></my-page-detail>
         `,
     styles:[`
             .selected {
@@ -75,26 +67,25 @@ export class Page {
                 margin-right: .8em;
                 border-radius: 4px 0 0 4px;
             }
-            `]
+            `],
+    directives: [PageDetailComponent],
+    providers: [PageService]
 })
 
-export class AppComponent {
+export class AppComponent implements OnInit {
     title = 'Prairie Hill Learning Center';
-    pages = PAGES;
+    pages: Page[]; 
     selectedPage: Page;
 
+    constructor(private pageService: PageService) { }
+
+    getPages() {
+        this.pageService.getPages().then(pages => this.pages = pages);
+    }
+
+    ngOnInit() {
+        this.getPages();
+    }
+    
     onSelect(page: Page) { this.selectedPage = page; }
 }
-
-var PAGES: Page[] = [
-    { "id": 1,  "title": "Home"       },
-    { "id": 2,  "title": "About"      },
-    { "id": 3,  "title": "Programs"   },
-    { "id": 4,  "title": "Tours"      },
-    { "id": 5,  "title": "Staff"      },
-    { "id": 6,  "title": "Calendar"   },
-    { "id": 7,  "title": "Employment" },
-    { "id": 8,  "title": "Donate"     },
-    { "id": 9,  "title": "Contact"    },
-    { "id": 10, "title": "Events"     }
-];

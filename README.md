@@ -3,7 +3,11 @@
 <div id="text-table-of-contents">
 <ul>
 <li><a href="#sec-1">1. Config</a></li>
-<li><a href="#sec-2">2. App</a></li>
+<li><a href="#sec-2">2. App</a>
+<ul>
+<li><a href="#sec-2-1">2.1. Pages</a></li>
+</ul>
+</li>
 <li><a href="#sec-3">3. Template</a></li>
 <li><a href="#sec-4">4. Styles</a></li>
 <li><a href="#sec-5">5. Dev</a>
@@ -127,36 +131,36 @@
 
 # App<a id="sec-2" name="sec-2"></a>
 
+/ 5
+
+    import { bootstrap }    from '@angular/platform-browser-dynamic';
+    
+    import { AppComponent } from './app.component';
+    
+    bootstrap(AppComponent);
+
 5 / 4 / 3 / Index
 
-    import { Component } from '@angular/core';
+    import { Component, OnInit } from '@angular/core';
     
-    export class Page {
-        id: number;
-        title: string;
-    }
+    import { Page } from './page';
+    import { PageDetailComponent } from './page-detail.component';
+    import { PageService } from './page.service';
     
     @Component({
         selector: 'my-app',
-    
         template:`
-        <h1>{{title}}</h1>
-        <h2>My Pages</h2>
-        <ul class="pages">
-          <li *ngFor="let page of pages"
-            [class.selected]="page === selectedPage"
-            (click)="onSelect(page)">
-            <span class="badge">{{page.id}}</span> {{page.title}}
-          </li>
-        </ul>
-        <div *ngIf="selectedPage">
-          <h2>{{selectedPage.title}} details!</h2>
-          <div><label>id: </label>{{selectedPage.id}}</div>
-          <div>
-            <label>title: </label>
-            <input [(ngModel)]="selectedPage.title" placeholder="title"/>
-          </div>
-        </div>
+            <h1>{{title}}</h1>
+            <h2>Menu</h2>
+            <ul class="pages">
+              <li *ngFor="let page of pages"
+                [class.selected]="page === selectedPage"
+                (click)="onSelect(page)">
+                <span class="badge">{{page.id}}</span> {{page.title}}
+              </li>
+            </ul>
+    
+            <my-page-detail [page]="selectedPage"></my-page-detail>
             `,
         styles:[`
                 .selected {
@@ -206,18 +210,84 @@
                     margin-right: .8em;
                     border-radius: 4px 0 0 4px;
                 }
-                `]
+                `],
+        directives: [PageDetailComponent],
+        providers: [PageService]
     })
     
-    export class AppComponent {
+    export class AppComponent implements OnInit {
         title = 'Prairie Hill Learning Center';
-        pages = PAGES;
+        pages: Page[]; 
         selectedPage: Page;
+    
+        constructor(private pageService: PageService) { }
+    
+        getPages() {
+            this.pageService.getPages().then(pages => this.pages = pages);
+        }
+    
+        ngOnInit() {
+            this.getPages();
+        }
     
         onSelect(page: Page) { this.selectedPage = page; }
     }
+
+9
+10
+
+## Pages<a id="sec-2-1" name="sec-2-1"></a>
+
+    import { Component, Input } from '@angular/core';
     
-    var PAGES: Page[] = [
+    import { Page } from './page';
+    
+    @Component({
+        selector: 'my-page-detail',
+        template: `
+            <div *ngIf="page">
+              <h2>{{page.title}}</h2>
+              <div><label>id: </label>{{page.id}}</div>
+              <div>
+                <label>title: </label>
+                <input [(ngModel)]="page.title" placeholder="title"/>
+              </div>
+            </div>
+            `
+    })
+    
+    export class PageDetailComponent {
+        @Input()
+        page: Page;
+    }
+
+2
+
+    export class Page {
+        id: number;
+        title: string;
+    }
+
+    import { Injectable } from '@angular/core';
+    
+    import { Page } from './page';
+    import { PAGES } from './mock-pages';
+    
+    @Injectable()
+    export class PageService {
+        getPages() {
+            return Promise.resolve(PAGES);
+        }
+        getPagesSlowly() {
+            return new Promise<Page[]>(resolve => setTimeout(() => resolve(PAGES), 2000));
+        }
+    }
+
+2
+
+    import { Page } from './page';
+    
+    export var PAGES: Page[] = [
         { "id": 1,  "title": "Home"       },
         { "id": 2,  "title": "About"      },
         { "id": 3,  "title": "Programs"   },
@@ -229,14 +299,6 @@
         { "id": 9,  "title": "Contact"    },
         { "id": 10, "title": "Events"     }
     ];
-
-/
-
-    import { bootstrap }    from '@angular/platform-browser-dynamic';
-    
-    import { AppComponent } from './app.component';
-    
-    bootstrap(AppComponent);
 
 # Template<a id="sec-3" name="sec-3"></a>
 
@@ -339,7 +401,7 @@ Angular2 is written with TypeScript(ES6). This is the future.
     
     ---
     
-    app/5
+    app/6
     
     Structure of every component:
     
@@ -351,13 +413,13 @@ Angular2 is written with TypeScript(ES6). This is the future.
     -   A that controls the appearance and behavior of a view 
         through its template.
 
-3.  Add 6, identifying the root component to Angular
+3.  Add 5, identifying the root component to Angular
     
     2
     
-    app/6
+    app/5
 
-4.  Add 7, the web page that hosts the application
+4.  Add 11, the web page that hosts the application
     
     3
 
@@ -367,4 +429,10 @@ Angular2 is written with TypeScript(ES6). This is the future.
 
 ## Tutorials<a id="sec-5-1" name="sec-5-1"></a>
 
-5
+<https://angular.io/docs/ts/latest/tutorial/toh-pt3.html>
+
+6
+
+7
+
+2

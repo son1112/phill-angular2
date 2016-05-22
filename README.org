@@ -122,38 +122,41 @@
 
 * App
 
+  [[Index]] / [[Dev]]
+
+  #+NAME: main.ts
+  #+begin_src js :tangle app/main.ts :padline no
+    import { bootstrap }    from '@angular/platform-browser-dynamic';
+
+    import { AppComponent } from './app.component';
+
+    bootstrap(AppComponent);
+  #+end_src
+
   [[Dev]] / [[Styles]] / [[Template]] / [[index.html][Index]]
 
   #+NAME: app.component.ts
   #+begin_src js :tangle app/app.component.ts :padline no
-    import { Component } from '@angular/core';
+    import { Component, OnInit } from '@angular/core';
 
-    export class Page {
-        id: number;
-        title: string;
-    }
+    import { Page } from './page';
+    import { PageDetailComponent } from './page-detail.component';
+    import { PageService } from './page.service';
 
     @Component({
         selector: 'my-app',
-
         template:`
-        <h1>{{title}}</h1>
-        <h2>My Pages</h2>
-        <ul class="pages">
-          <li *ngFor="let page of pages"
-            [class.selected]="page === selectedPage"
-            (click)="onSelect(page)">
-            <span class="badge">{{page.id}}</span> {{page.title}}
-          </li>
-        </ul>
-        <div *ngIf="selectedPage">
-          <h2>{{selectedPage.title}} details!</h2>
-          <div><label>id: </label>{{selectedPage.id}}</div>
-          <div>
-            <label>title: </label>
-            <input [(ngModel)]="selectedPage.title" placeholder="title"/>
-          </div>
-        </div>
+            <h1>{{title}}</h1>
+            <h2>Menu</h2>
+            <ul class="pages">
+              <li *ngFor="let page of pages"
+                [class.selected]="page === selectedPage"
+                (click)="onSelect(page)">
+                <span class="badge">{{page.id}}</span> {{page.title}}
+              </li>
+            </ul>
+
+            <my-page-detail [page]="selectedPage"></my-page-detail>
             `,
         styles:[`
                 .selected {
@@ -203,43 +206,108 @@
                     margin-right: .8em;
                     border-radius: 4px 0 0 4px;
                 }
-                `]
+                `],
+        directives: [PageDetailComponent],
+        providers: [PageService]
     })
 
-    export class AppComponent {
+    export class AppComponent implements OnInit {
         title = 'Prairie Hill Learning Center';
-        pages = PAGES;
+        pages: Page[]; 
         selectedPage: Page;
 
+        constructor(private pageService: PageService) { }
+
+        getPages() {
+            this.pageService.getPages().then(pages => this.pages = pages);
+        }
+
+        ngOnInit() {
+            this.getPages();
+        }
+        
         onSelect(page: Page) { this.selectedPage = page; }
     }
-
-    var PAGES: Page[] = [
-        { "id": 1,  "title": "Home"       },
-        { "id": 2,  "title": "About"      },
-        { "id": 3,  "title": "Programs"   },
-        { "id": 4,  "title": "Tours"      },
-        { "id": 5,  "title": "Staff"      },
-        { "id": 6,  "title": "Calendar"   },
-        { "id": 7,  "title": "Employment" },
-        { "id": 8,  "title": "Donate"     },
-        { "id": 9,  "title": "Contact"    },
-        { "id": 10, "title": "Events"     }
-    ];
-
-
   #+end_src
 
-  [[Index]] /
+  [[page.service.ts]]
+  [[mock-pages.ts]]
 
-  #+NAME: main.ts
-  #+begin_src js :tangle app/main.ts :padline no
-    import { bootstrap }    from '@angular/platform-browser-dynamic';
+** Pages
 
-    import { AppComponent } from './app.component';
+   #+NAME: page-detail.component.ts
+   #+begin_src js :tangle app/page-detail.component.ts :padline no
+     import { Component, Input } from '@angular/core';
 
-    bootstrap(AppComponent);
-  #+end_src
+     import { Page } from './page';
+
+     @Component({
+         selector: 'my-page-detail',
+         template: `
+             <div *ngIf="page">
+               <h2>{{page.title}}</h2>
+               <div><label>id: </label>{{page.id}}</div>
+               <div>
+                 <label>title: </label>
+                 <input [(ngModel)]="page.title" placeholder="title"/>
+               </div>
+             </div>
+             `
+     })
+
+     export class PageDetailComponent {
+         @Input()
+         page: Page;
+     }
+   #+end_src
+
+   [[App]]
+
+   #+NAME: page.ts
+   #+begin_src js :tangle app/page.ts :padline no
+     export class Page {
+         id: number;
+         title: string;
+     }
+   #+end_src
+
+   #+NAME: page.service.ts
+   #+begin_src js :tangle app/page.service.ts :padline no
+     import { Injectable } from '@angular/core';
+
+     import { Page } from './page';
+     import { PAGES } from './mock-pages';
+
+     @Injectable()
+     export class PageService {
+         getPages() {
+             return Promise.resolve(PAGES);
+         }
+         getPagesSlowly() {
+             return new Promise<Page[]>(resolve => setTimeout(() => resolve(PAGES), 2000));
+         }
+     }
+   #+end_src
+
+   [[App]]
+
+   #+NAME: mock-pages.ts
+   #+begin_src js :tangle app/mock-pages.ts :padline no
+     import { Page } from './page';
+
+     export var PAGES: Page[] = [
+         { "id": 1,  "title": "Home"       },
+         { "id": 2,  "title": "About"      },
+         { "id": 3,  "title": "Programs"   },
+         { "id": 4,  "title": "Tours"      },
+         { "id": 5,  "title": "Staff"      },
+         { "id": 6,  "title": "Calendar"   },
+         { "id": 7,  "title": "Employment" },
+         { "id": 8,  "title": "Donate"     },
+         { "id": 9,  "title": "Contact"    },
+         { "id": 10, "title": "Events"     }
+     ];
+   #+end_src
 
 * Template
 
@@ -373,7 +441,10 @@
 
 ** Tutorials
 
+   https://angular.io/docs/ts/latest/tutorial/toh-pt3.html
+
    [[app.component.ts]]
 
-     
+   [[page-detail.component.ts]]
   
+   [[App]]
