@@ -30,7 +30,7 @@
 
 # Config<a id="sec-1" name="sec-1"></a>
 
-5
+NAV => 5 / 4
 
     {
       "name": "phill-angular2",

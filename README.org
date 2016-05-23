@@ -2,7 +2,7 @@
 
 * Config
 
-  [[Dev]]
+  NAV => [[Dev]] / [[Styles]]
 
   #+NAME: package.json
   #+begin_src js :tangle package.json :padline no
