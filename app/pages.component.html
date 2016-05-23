@@ -1,0 +1,14 @@
+<h2>Menu</h2>
+<ul class="pages">
+  <li *ngFor="let page of pages"
+      [class.selected]="page === selectedPage"
+      (click)="onSelect(page)">
+    <span class="badge">{{page.id}}</span> {{page.title}}
+  </li>
+</ul>
+<div *ngIf="selectedPage">
+  <h2>
+    {{selectedPage.tite | uppercase}} is your current page
+  </h2>
+  <button (click)="gotoDetail()">View Details</button>
+</div>

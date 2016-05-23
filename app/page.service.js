@@ -19,6 +19,9 @@ var PageService = (function () {
     PageService.prototype.getPagesSlowly = function () {
         return new Promise(function (resolve) { return setTimeout(function () { return resolve(mock_pages_1.PAGES); }, 2000); });
     };
+    PageService.prototype.getPage = function (id) {
+        return Promise.resolve(mock_pages_1.PAGES).then(function (pages) { return pages.filter(function (page) { return page.id === id; })[0]; });
+    };
     PageService = __decorate([
         core_1.Injectable(), 
         __metadata('design:paramtypes', [])

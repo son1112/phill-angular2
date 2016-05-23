@@ -11,28 +11,33 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var core_1 = require('@angular/core');
 var router_deprecated_1 = require('@angular/router-deprecated');
 var page_service_1 = require('./page.service');
-var PageDetailComponent = (function () {
-    function PageDetailComponent(pageService, routeParams) {
+var PagesComponent = (function () {
+    function PagesComponent(router, pageService) {
+        this.router = router;
         this.pageService = pageService;
-        this.routeParams = routeParams;
+        this.title = 'Prairie Hill Learning Center';
     }
-    PageDetailComponent.prototype.ngOnInit = function () {
+    PagesComponent.prototype.getPages = function () {
         var _this = this;
-        var id = +this.routeParams.get('id');
-        this.pageService.getPage(id)
-            .then(function (page) { return _this.page = page; });
+        this.pageService.getPages().then(function (pages) { return _this.pages = pages; });
     };
-    PageDetailComponent.prototype.goBack = function () {
-        window.history.back();
+    PagesComponent.prototype.ngOnInit = function () {
+        this.getPages();
     };
-    PageDetailComponent = __decorate([
+    PagesComponent.prototype.onSelect = function (page) { this.selectedPage = page; };
+    PagesComponent.prototype.gotoDetail = function () {
+        this.router.navigate(['PageDetail', {
+                id: this.selectedPage.id }]);
+    };
+    PagesComponent = __decorate([
         core_1.Component({
-            selector: 'my-page-detail',
-            templateUrl: 'app/page-detail.component.html'
+            selector: 'my-pages',
+            templateUrl: 'app/pages.component.html',
+            styleUrls: ['app/pages.component.css']
         }), 
-        __metadata('design:paramtypes', [page_service_1.PageService, router_deprecated_1.RouteParams])
-    ], PageDetailComponent);
-    return PageDetailComponent;
+        __metadata('design:paramtypes', [router_deprecated_1.Router, page_service_1.PageService])
+    ], PagesComponent);
+    return PagesComponent;
 }());
-exports.PageDetailComponent = PageDetailComponent;
-//# sourceMappingURL=page-detail.component.js.map
+exports.PagesComponent = PagesComponent;
+//# sourceMappingURL=pages.component.js.map

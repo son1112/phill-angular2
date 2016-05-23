@@ -1,0 +1,9 @@
+<h3>Prairie Hill Pages (Spaces)</h3>
+<div class="grid grid-pad">
+  <div *ngFor="let page of pages"
+       (click)="gotoDetail(page)" class="col-1-4">
+    <div class="module page">
+      <h4>{{page.title}}</h4>
+    </div>
+  </div>
+</div>
