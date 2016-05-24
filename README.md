@@ -11,14 +11,14 @@
 </li>
 <li><a href="#sec-3">3. Template</a>
 <ul>
-<li><a href="#sec-3-1">3.1. Pages</a></li>
-<li><a href="#sec-3-2">3.2. Dashboard</a></li>
+<li><a href="#sec-3-1">3.1. Dashboard</a></li>
+<li><a href="#sec-3-2">3.2. Pages</a></li>
 </ul>
 </li>
 <li><a href="#sec-4">4. Styles</a>
 <ul>
-<li><a href="#sec-4-1">4.1. Pages</a></li>
-<li><a href="#sec-4-2">4.2. Dashboard</a></li>
+<li><a href="#sec-4-1">4.1. Dashboard</a></li>
+<li><a href="#sec-4-2">4.2. Pages</a></li>
 </ul>
 </li>
 <li><a href="#sec-5">5. Dev</a>
@@ -65,7 +65,7 @@ NAV => 5 / 4 / / 3 / 2.1
         "reflect-metadata": "^0.1.3",
         "rxjs": "5.0.0-beta.6",
         "zone.js": "^0.6.12",
-        "angular2-in-memory-web-api": "0.0.9",
+        "angular2-in-memory-web-api": "0.0.10",
         "bootstrap": "^3.3.6"
       },
       "devDependencies": {
@@ -118,7 +118,7 @@ NAV => 5 / 4 / / 3 / 2.1
       var packages = {
         'app':                        { main: 'main.js',  defaultExtension: 'js' },
         'rxjs':                       { defaultExtension: 'js' },
-        'angular2-in-memory-web-api': { defaultExtension: 'js' },
+        'angular2-in-memory-web-api': { main: 'index.js', defaultExtension: 'js' }
       };
       var ngPackageNames = [
         'common',
@@ -146,20 +146,33 @@ NAV => 5 / 4 / / 3 / 2.1
 
 NAV => / 5 / 4 / 3 / 2.1
 
+    // TEMP: Imports for loading & configuring the in-memory web api
+    import { provide } from '@angular/core';
+    import { XHRBackend } from '@angular/http';
+    
+    import { InMemoryBackendService, SEED_DATA } from 'angular2-in-memory-web-api';
+    import { InMemoryDataService } from './in-memory-data.service';
+    
     import { bootstrap }    from '@angular/platform-browser-dynamic';
+    import { HTTP_PROVIDERS } from '@angular/http';
     
     import { AppComponent } from './app.component';
     
-    bootstrap(AppComponent);
+    bootstrap(AppComponent, [
+        HTTP_PROVIDERS,
+        provide(XHRBackend, {
+            useClass: InMemoryBackendService }), // in-mem server
+        provide(SEED_DATA, {
+            useClass: InMemoryDataService }) // in-mem server data
+    ]);
 
     import { Component } from '@angular/core';
     import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from '@angular/router-deprecated';
     
-    import { PageService } from './page.service';
-    import { PagesComponent } from './pages.component';
     import { DashboardComponent } from './dashboard.component';
-    
+    import { PagesComponent } from './pages.component';
     import { PageDetailComponent } from './page-detail.component';
+    import { PageService } from './page.service';
     
     @Component({
         selector: 'my-app',
@@ -182,11 +195,6 @@ NAV => / 5 / 4 / 3 / 2.1
     
     @RouteConfig([
         {
-            path: '/pages',
-            name: 'Pages',
-            component: PagesComponent
-        },
-        {
             path: '/dashboard',
             name: 'Dashboard',
             component: DashboardComponent,
@@ -196,6 +204,11 @@ NAV => / 5 / 4 / 3 / 2.1
             path: '/detail/:id',
             name: 'PageDetail',
             component: PageDetailComponent
+        },
+        {
+            path: '/pages',
+            name: 'Pages',
+            component: PagesComponent
         }
     ])
     
@@ -203,10 +216,28 @@ NAV => / 5 / 4 / 3 / 2.1
         title = 'Prairie Hill Learning Center';
     }
 
+    export class InMemoryDataService {
+      createDb() {
+        let pages = [
+         { "id": 1,  "title": "Home"       },
+         { "id": 2,  "title": "About"      },
+         { "id": 3,  "title": "Programs"   },
+         { "id": 4,  "title": "Tours"      },
+         { "id": 5,  "title": "Staff"      },
+         { "id": 6,  "title": "Calendar"   },
+         { "id": 7,  "title": "Employment" },
+         { "id": 8,  "title": "Donate"     },
+         { "id": 9,  "title": "Contact"    },
+         { "id": 10, "title": "Events"     }
+        ];
+        return {pages};
+      }
+    }
+
 ## Dashboard<a id="sec-2-1" name="sec-2-1"></a>
 
-NAV => 6 / 16 / 20
-=> 18 / 21 
+NAV => 6 / 14 / 21
+=> 18 / 19 
 
     import { Component, OnInit } from '@angular/core';
     
@@ -243,10 +274,10 @@ NAV => 6 / 16 / 20
 
 ## Pages<a id="sec-2-2" name="sec-2-2"></a>
 
-TEMP => 16 / 15 / 14
-SERV => 11 
-COMP => 10 / 9 / 7
-STYL => 19 /
+TEMP => 14 / 16 / 15
+SERV => 12 
+COMP => 11 / 10 / 8
+STYL => 20 /
 
     export class Page {
         id: number;
@@ -258,40 +289,70 @@ STYL => 19 /
     
     import { Page } from './page';
     import { PageService } from './page.service';
+    import { PageDetailComponent } from './page-detail.component';
     
     @Component({
         selector: 'my-pages',
         templateUrl: 'app/pages.component.html',
-        styleUrls: ['app/pages.component.css']
+        styleUrls: ['app/pages.component.css'],
+        directives: [PageDetailComponent]
     })
     
     export class PagesComponent implements OnInit {
-        title = 'Prairie Hill Learning Center';
-    
         pages: Page[]; 
         selectedPage: Page;
+        addingPage = false;
+        error: any;
     
         constructor(
-            private router: Router,
-            private pageService: PageService) { }
+            private _router: Router,
+            private _pageService: PageService) { }
     
         getPages() {
-            this.pageService.getPages().then(pages => this.pages = pages);
+            this._pageService
+                .getPages()
+                .then(pages => this.pages = pages)
+                .catch(error => this.error = error); //TODO: Display error message
+        }
+    
+        addPage() {
+            this.addingPage = true;
+            this.selectedPage = null;
+        }
+    
+        close(savedPage: Page) {
+            this.addingPage = false;
+            if (savedPage) { this.getPages(); }
+        }
+    
+        delete(page: Page, event: any) {
+            event.stopPropagation();
+            this._pageService
+                .delete(page)
+                .then(res => {
+                    this.pages = this.pages.filter(h => h !== page);
+                    if (this.selectedPage === page) {
+                        this.selectedPage = null; }
+                })
+                .catch(error => this.error = error); // TODO: Display error message
         }
     
         ngOnInit() {
             this.getPages();
         }
     
-        onSelect(page: Page) { this.selectedPage = page; }
+        onSelect(page: Page) {
+            this.selectedPage = page;
+            this.addingPage = false;
+        }
     
         gotoDetail() {
-            this.router.navigate(['PageDetail', {
+            this._router.navigate(['PageDetail', {
                 id: this.selectedPage.id }]);
         }
     }
 
-    import { Component, OnInit } from '@angular/core';
+    import { Component, Input, Output, OnInit, EventEmitter } from '@angular/core';
     import { RouteParams } from '@angular/router-deprecated';
     
     import { Page } from './page';
@@ -299,64 +360,142 @@ STYL => 19 /
     
     @Component({
         selector: 'my-page-detail',
-        templateUrl: 'app/page-detail.component.html'
+        templateUrl: 'app/page-detail.component.html',
+        styleUrls: ['app/page-detail.component.css']
     })
     
-    
     export class PageDetailComponent implements OnInit {
-        page: Page;
+        @Input() page: Page;
+        @Output() close = new EventEmitter();
+        error: any;
+        navigated = false; // true if navigated here
     
         constructor(
-            private pageService: PageService,
-            private routeParams: RouteParams) {
+            private _pageService: PageService,
+            private _routeParams: RouteParams) {
         }
     
         ngOnInit() {
-            let id = +this.routeParams.get('id');
-            this.pageService.getPage(id)
-                .then(page => this.page = page);
+            if (this._routeParams.get('id') !== null) {
+                let id = +this._routeParams.get('id');
+                this.navigated = true;
+                this._pageService.getPage(id)
+                    .then(page => this.page = page);
+            } else {
+                this.navigated = false;
+                this.page = new Page();
+            }
         }
-        goBack() {
-            window.history.back();
+    
+        save() {
+            this._pageService
+                .save(this.page)
+                .then(page => {
+                    this.page = page; // saved page, w/ id if new
+                    this.goBack(page);
+                })
+                .catch(error => this.error = error); // TODO: Display error message
+        }
+    
+        goBack(savedPage: Page = null) {
+            this.close.emit(savedPage);
+            if (this.navigated) {
+                window.history.back();
+            }
         }
     }
 
     import { Injectable } from '@angular/core';
+    import { Http, Headers } from '@angular/http';
+    
+    import 'rxjs/add/operator/toPromise';
     
     import { Page } from './page';
-    import { PAGES } from './mock-pages';
     
     @Injectable()
     export class PageService {
-        getPages() {
-            return Promise.resolve(PAGES);
+    
+        private pagesUrl = 'app/pages'; // URL to web api
+    
+        constructor(private http: Http) { }
+    
+        // CREATE new Page
+        private post(page: Page): Promise<Page> {
+            let headers = new Headers({
+                'Content-Type': 'application/json'});
+    
+            return this.http
+                .post(this.pagesUrl,
+                      JSON.stringify(page),
+                      {headers: headers})
+                .toPromise()
+                .then(res => res.json().data)
+                .catch(this.handleError);
         }
-        getPagesSlowly() {
-            return new Promise<Page[]>(resolve => setTimeout(() => resolve(PAGES), 2000));
+    
+        // READ existing Page(s)
+        getPages(): Promise<Page[]> {
+            return this.http.get(this.pagesUrl)
+                .toPromise()
+                .then(response => response.json().data)
+                .catch(this.handleError);
         }
         getPage(id: number) {
-            return Promise.resolve(PAGES).then(pages => pages.filter(page => page.id === id)[0]);
+            return this.getPages()
+                .then(pages => pages.filter(page => page.id === id)[0]);
+        }
+    
+        // UPDATE existing Page
+        private put(page: Page) {
+            let headers = new Headers();
+            headers.append('Content-Type',
+                           'application/json');
+    
+            let url = `${this.pagesUrl}/${page.id}`;
+    
+            return this.http
+                .put(url, JSON.stringify(page),
+                     {headers: headers})
+                .toPromise()
+                .then(() => page)
+                .catch(this.handleError);
+        }
+    
+        // DESTROY existing Page
+        delete(page: Page) {
+            let headers = new Headers();
+            headers.append('Content-Type',
+                           'application/json');
+    
+            let url = `${this.pagesUrl}/${page.id}`;
+    
+            return this.http
+                .delete(url, headers)
+                .toPromise()
+                .catch(this.handleError);
+        }
+    
+        // SAVE combination of _post and _put methods
+        save(page: Page): Promise<Page> {
+            if (page.id) {
+                return this.put(page);
+            }
+            return this.post(page);
+        }
+    
+        // handle ERRORS
+        private handleError(error: any) {
+            console.error('An error occurred', error);
+            return Promise.reject(error.message || error);
         }
     }
 
-    import { Page } from './page';
-    
-    export var PAGES: Page[] = [
-        { "id": 1,  "title": "Home"       },
-        { "id": 2,  "title": "About"      },
-        { "id": 3,  "title": "Programs"   },
-        { "id": 4,  "title": "Tours"      },
-        { "id": 5,  "title": "Staff"      },
-        { "id": 6,  "title": "Calendar"   },
-        { "id": 7,  "title": "Employment" },
-        { "id": 8,  "title": "Donate"     },
-        { "id": 9,  "title": "Contact"    },
-        { "id": 10, "title": "Events"     }
-    ];
-
 # Template<a id="sec-3" name="sec-3"></a>
 
-NAV => 2 /
+APP  => 2 /
+SERV => 12 /
+COMP => 11 / 10
+TEMP => 16
 
     <html>
       <head>
@@ -398,19 +537,43 @@ NAV => 2 /
       </body>
     </html>
 
-## Pages<a id="sec-3-1" name="sec-3-1"></a>
+## Dashboard<a id="sec-3-1" name="sec-3-1"></a>
 
-    <h2>Menu</h2>
+NAV => 8 / 10 /
+
+    <h3>Prairie Hill Pages (Spaces)</h3>
+    <div class="grid grid-pad">
+      <div *ngFor="let page of pages"
+           (click)="gotoDetail(page)" class="col-1-4">
+        <div class="module page">
+          <h4>{{page.title}}</h4>
+        </div>
+      </div>
+    </div>
+
+## Pages<a id="sec-3-2" name="sec-3-2"></a>
+
+    <h2>My Pages</h2>
     <ul class="pages">
       <li *ngFor="let page of pages"
-          [class.selected]="page === selectedPage"
-          (click)="onSelect(page)">
-        <span class="badge">{{page.id}}</span> {{page.title}}
+          (click)="onSelect(page)"
+          [class.selected]="page === selectedPage">
+        <span class="page-element">
+          <span class="badge">{{page.id}}</span> {{page.title}}
+        </span>
+        <button class="delete-button"
+                (click)="delete(page, $event)">Delete</button>
       </li>
     </ul>
+    
+    <button (click)="addPage()">Add New Page</button>
+    <div *ngIf="addingPage">
+      <my-page-detail (close)="close($event)"></my-page-detail>
+    </div>
+    
     <div *ngIf="selectedPage">
       <h2>
-        {{selectedPage.tite | uppercase}} is your current page
+        {{selectedPage.title | uppercase}} is your current page
       </h2>
       <button (click)="gotoDetail()">View Details</button>
     </div>
@@ -425,20 +588,7 @@ NAV => 2 /
         <input [(ngModel)]="page.title" placeholder="title"/>
       </div>
       <button (click)="goBack()">Back</button>
-    </div>
-
-## Dashboard<a id="sec-3-2" name="sec-3-2"></a>
-
-NAV => 7 / 9 /
-
-    <h3>Prairie Hill Pages (Spaces)</h3>
-    <div class="grid grid-pad">
-      <div *ngFor="let page of pages"
-           (click)="gotoDetail(page)" class="col-1-4">
-        <div class="module page">
-          <h4>{{page.title}}</h4>
-        </div>
-      </div>
+      <button (click)="save()">Save</button>
     </div>
 
 # Styles<a id="sec-4" name="sec-4"></a>
@@ -484,7 +634,7 @@ NAV => 7 / 9 /
       font-family: Arial, Helvetica, sans-serif; 
     }
 
-NAV => 13
+NAV => 13 / 15 / 10
 
     h1 {
       font-size: 1.2em;
@@ -515,7 +665,70 @@ NAV => 13
       color: #039be5;
     }
 
-## Pages<a id="sec-4-1" name="sec-4-1"></a>
+## Dashboard<a id="sec-4-1" name="sec-4-1"></a>
+
+    [class*='col-'] {
+      float: left;
+    }
+    *, *:after, *:before {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+    h3 {
+      text-align: center; margin-bottom: 0;
+    }
+    [class*='col-'] {
+      padding-right: 20px;
+      padding-bottom: 20px;
+    }
+    [class*='col-']:last-of-type {
+      padding-right: 0;
+    }
+    .grid {
+      margin: 0;
+    }
+    .col-1-4 {
+      width: 25%;
+    }
+    .module {
+        padding: 20px;
+        text-align: center;
+        color: #eee;
+        max-height: 120px;
+        min-width: 120px;
+        background-color: #607D8B;
+        border-radius: 2px;
+    }
+    h4 {
+      position: relative;
+    }
+    .module:hover {
+      background-color: #EEE;
+      cursor: pointer;
+      color: #607d8b;
+    }
+    .grid-pad {
+      padding: 10px 0;
+    }
+    .grid-pad > [class*='col-']:last-of-type {
+      padding-right: 20px;
+    }
+    @media (max-width: 600px) {
+        .module {
+          font-size: 10px;
+          max-height: 75px; }
+    }
+    @media (max-width: 1024px) {
+        .grid {
+          margin: 0;
+        }
+        .module {
+          min-width: 60px;
+        }
+    }
+
+## Pages<a id="sec-4-2" name="sec-4-2"></a>
 
     .selected {
         background-color: #CFD8DC !important;
@@ -593,69 +806,6 @@ NAV => 13
       background-color: #eee;
       color: #ccc; 
       cursor: auto;
-    }
-
-## Dashboard<a id="sec-4-2" name="sec-4-2"></a>
-
-    [class*='col-'] {
-      float: left;
-    }
-    *, *:after, *:before {
-        -webkit-box-sizing: border-box;
-        -moz-box-sizing: border-box;
-        box-sizing: border-box;
-    }
-    h3 {
-      text-align: center; margin-bottom: 0;
-    }
-    [class*='col-'] {
-      padding-right: 20px;
-      padding-bottom: 20px;
-    }
-    [class*='col-']:last-of-type {
-      padding-right: 0;
-    }
-    .grid {
-      margin: 0;
-    }
-    .col-1-4 {
-      width: 25%;
-    }
-    .module {
-        padding: 20px;
-        text-align: center;
-        color: #eee;
-        max-height: 120px;
-        min-width: 120px;
-        background-color: #607D8B;
-        border-radius: 2px;
-    }
-    h4 {
-      position: relative;
-    }
-    .module:hover {
-      background-color: #EEE;
-      cursor: pointer;
-      color: #607d8b;
-    }
-    .grid-pad {
-      padding: 10px 0;
-    }
-    .grid-pad > [class*='col-']:last-of-type {
-      padding-right: 20px;
-    }
-    @media (max-width: 600px) {
-        .module {
-          font-size: 10px;
-          max-height: 75px; }
-    }
-    @media (max-width: 1024px) {
-        .grid {
-          margin: 0;
-        }
-        .module {
-          min-width: 60px;
-        }
     }
 
 # Dev<a id="sec-5" name="sec-5"></a>
@@ -756,6 +906,6 @@ Angular2 is written with TypeScript(ES6). This is the future.
 
 6
 
-10
+11
 
 2

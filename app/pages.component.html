@@ -1,14 +1,24 @@
-<h2>Menu</h2>
+<h2>My Pages</h2>
 <ul class="pages">
   <li *ngFor="let page of pages"
-      [class.selected]="page === selectedPage"
-      (click)="onSelect(page)">
-    <span class="badge">{{page.id}}</span> {{page.title}}
+      (click)="onSelect(page)"
+      [class.selected]="page === selectedPage">
+    <span class="page-element">
+      <span class="badge">{{page.id}}</span> {{page.title}}
+    </span>
+    <button class="delete-button"
+            (click)="delete(page, $event)">Delete</button>
   </li>
 </ul>
+
+<button (click)="addPage()">Add New Page</button>
+<div *ngIf="addingPage">
+  <my-page-detail (close)="close($event)"></my-page-detail>
+</div>
+
 <div *ngIf="selectedPage">
   <h2>
-    {{selectedPage.tite | uppercase}} is your current page
+    {{selectedPage.title | uppercase}} is your current page
   </h2>
   <button (click)="gotoDetail()">View Details</button>
 </div>

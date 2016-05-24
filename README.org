@@ -33,7 +33,7 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
         "reflect-metadata": "^0.1.3",
         "rxjs": "5.0.0-beta.6",
         "zone.js": "^0.6.12",
-        "angular2-in-memory-web-api": "0.0.9",
+        "angular2-in-memory-web-api": "0.0.10",
         "bootstrap": "^3.3.6"
       },
       "devDependencies": {
@@ -95,7 +95,7 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
       var packages = {
         'app':                        { main: 'main.js',  defaultExtension: 'js' },
         'rxjs':                       { defaultExtension: 'js' },
-        'angular2-in-memory-web-api': { defaultExtension: 'js' },
+        'angular2-in-memory-web-api': { main: 'index.js', defaultExtension: 'js' }
       };
       var ngPackageNames = [
         'common',
@@ -126,11 +126,25 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
 
   #+NAME: main.ts
   #+begin_src js :tangle app/main.ts :padline no
+    // TEMP: Imports for loading & configuring the in-memory web api
+    import { provide } from '@angular/core';
+    import { XHRBackend } from '@angular/http';
+
+    import { InMemoryBackendService, SEED_DATA } from 'angular2-in-memory-web-api';
+    import { InMemoryDataService } from './in-memory-data.service';
+
     import { bootstrap }    from '@angular/platform-browser-dynamic';
+    import { HTTP_PROVIDERS } from '@angular/http';
 
     import { AppComponent } from './app.component';
 
-    bootstrap(AppComponent);
+    bootstrap(AppComponent, [
+        HTTP_PROVIDERS,
+        provide(XHRBackend, {
+            useClass: InMemoryBackendService }), // in-mem server
+        provide(SEED_DATA, {
+            useClass: InMemoryDataService }) // in-mem server data
+    ]);
   #+end_src
 
   #+NAME: app.component.ts
@@ -138,11 +152,10 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
     import { Component } from '@angular/core';
     import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from '@angular/router-deprecated';
 
-    import { PageService } from './page.service';
-    import { PagesComponent } from './pages.component';
     import { DashboardComponent } from './dashboard.component';
-
+    import { PagesComponent } from './pages.component';
     import { PageDetailComponent } from './page-detail.component';
+    import { PageService } from './page.service';
 
     @Component({
         selector: 'my-app',
@@ -165,11 +178,6 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
 
     @RouteConfig([
         {
-            path: '/pages',
-            name: 'Pages',
-            component: PagesComponent
-        },
-        {
             path: '/dashboard',
             name: 'Dashboard',
             component: DashboardComponent,
@@ -179,11 +187,37 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
             path: '/detail/:id',
             name: 'PageDetail',
             component: PageDetailComponent
+        },
+        {
+            path: '/pages',
+            name: 'Pages',
+            component: PagesComponent
         }
     ])
 
     export class AppComponent {
         title = 'Prairie Hill Learning Center';
+    }
+  #+end_src
+
+  #+NAME: in-memory-data.service.ts
+  #+begin_src js :tangle app/in-memory-data.service.ts :padline no
+    export class InMemoryDataService {
+      createDb() {
+        let pages = [
+         { "id": 1,  "title": "Home"       },
+         { "id": 2,  "title": "About"      },
+         { "id": 3,  "title": "Programs"   },
+         { "id": 4,  "title": "Tours"      },
+         { "id": 5,  "title": "Staff"      },
+         { "id": 6,  "title": "Calendar"   },
+         { "id": 7,  "title": "Employment" },
+         { "id": 8,  "title": "Donate"     },
+         { "id": 9,  "title": "Contact"    },
+         { "id": 10, "title": "Events"     }
+        ];
+        return {pages};
+      }
     }
   #+end_src
 
@@ -230,6 +264,7 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
 
 ** Pages
 
+   #+NAME: NAV
    TEMP => [[dashboard.component.html]] / [[page-detail.component.html]] / [[pages.component.html]]
    SERV => [[page.service.ts]] 
    COMP => [[page-detail.component.ts]] / [[pages.component.ts]] / [[dashboard.component.ts]]
@@ -250,35 +285,65 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
 
      import { Page } from './page';
      import { PageService } from './page.service';
+     import { PageDetailComponent } from './page-detail.component';
 
      @Component({
          selector: 'my-pages',
          templateUrl: 'app/pages.component.html',
-         styleUrls: ['app/pages.component.css']
+         styleUrls: ['app/pages.component.css'],
+         directives: [PageDetailComponent]
      })
 
      export class PagesComponent implements OnInit {
-         title = 'Prairie Hill Learning Center';
-
          pages: Page[]; 
          selectedPage: Page;
+         addingPage = false;
+         error: any;
 
          constructor(
-             private router: Router,
-             private pageService: PageService) { }
+             private _router: Router,
+             private _pageService: PageService) { }
 
          getPages() {
-             this.pageService.getPages().then(pages => this.pages = pages);
+             this._pageService
+                 .getPages()
+                 .then(pages => this.pages = pages)
+                 .catch(error => this.error = error); //TODO: Display error message
+         }
+
+         addPage() {
+             this.addingPage = true;
+             this.selectedPage = null;
+         }
+
+         close(savedPage: Page) {
+             this.addingPage = false;
+             if (savedPage) { this.getPages(); }
+         }
+
+         delete(page: Page, event: any) {
+             event.stopPropagation();
+             this._pageService
+                 .delete(page)
+                 .then(res => {
+                     this.pages = this.pages.filter(h => h !== page);
+                     if (this.selectedPage === page) {
+                         this.selectedPage = null; }
+                 })
+                 .catch(error => this.error = error); // TODO: Display error message
          }
 
          ngOnInit() {
              this.getPages();
          }
          
-         onSelect(page: Page) { this.selectedPage = page; }
+         onSelect(page: Page) {
+             this.selectedPage = page;
+             this.addingPage = false;
+         }
 
          gotoDetail() {
-             this.router.navigate(['PageDetail', {
+             this._router.navigate(['PageDetail', {
                  id: this.selectedPage.id }]);
          }
      }
@@ -286,7 +351,7 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
 
    #+NAME: page-detail.component.ts
    #+begin_src js :tangle app/page-detail.component.ts :padline no
-     import { Component, OnInit } from '@angular/core';
+     import { Component, Input, Output, OnInit, EventEmitter } from '@angular/core';
      import { RouteParams } from '@angular/router-deprecated';
 
      import { Page } from './page';
@@ -294,25 +359,48 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
 
      @Component({
          selector: 'my-page-detail',
-         templateUrl: 'app/page-detail.component.html'
+         templateUrl: 'app/page-detail.component.html',
+         styleUrls: ['app/page-detail.component.css']
      })
 
-
      export class PageDetailComponent implements OnInit {
-         page: Page;
+         @Input() page: Page;
+         @Output() close = new EventEmitter();
+         error: any;
+         navigated = false; // true if navigated here
 
          constructor(
-             private pageService: PageService,
-             private routeParams: RouteParams) {
+             private _pageService: PageService,
+             private _routeParams: RouteParams) {
          }
          
          ngOnInit() {
-             let id = +this.routeParams.get('id');
-             this.pageService.getPage(id)
-                 .then(page => this.page = page);
+             if (this._routeParams.get('id') !== null) {
+                 let id = +this._routeParams.get('id');
+                 this.navigated = true;
+                 this._pageService.getPage(id)
+                     .then(page => this.page = page);
+             } else {
+                 this.navigated = false;
+                 this.page = new Page();
+             }
          }
-         goBack() {
-             window.history.back();
+
+         save() {
+             this._pageService
+                 .save(this.page)
+                 .then(page => {
+                     this.page = page; // saved page, w/ id if new
+                     this.goBack(page);
+                 })
+                 .catch(error => this.error = error); // TODO: Display error message
+         }
+         
+         goBack(savedPage: Page = null) {
+             this.close.emit(savedPage);
+             if (this.navigated) {
+                 window.history.back();
+             }
          }
      }
    #+end_src
@@ -320,45 +408,97 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
    #+NAME: page.service.ts
    #+begin_src js :tangle app/page.service.ts :padline no
      import { Injectable } from '@angular/core';
+     import { Http, Headers } from '@angular/http';
+
+     import 'rxjs/add/operator/toPromise';
 
      import { Page } from './page';
-     import { PAGES } from './mock-pages';
 
      @Injectable()
      export class PageService {
-         getPages() {
-             return Promise.resolve(PAGES);
+
+         private pagesUrl = 'app/pages'; // URL to web api
+
+         constructor(private http: Http) { }
+         
+         // CREATE new Page
+         private post(page: Page): Promise<Page> {
+             let headers = new Headers({
+                 'Content-Type': 'application/json'});
+
+             return this.http
+                 .post(this.pagesUrl,
+                       JSON.stringify(page),
+                       {headers: headers})
+                 .toPromise()
+                 .then(res => res.json().data)
+                 .catch(this.handleError);
          }
-         getPagesSlowly() {
-             return new Promise<Page[]>(resolve => setTimeout(() => resolve(PAGES), 2000));
+
+         // READ existing Page(s)
+         getPages(): Promise<Page[]> {
+             return this.http.get(this.pagesUrl)
+                 .toPromise()
+                 .then(response => response.json().data)
+                 .catch(this.handleError);
          }
          getPage(id: number) {
-             return Promise.resolve(PAGES).then(pages => pages.filter(page => page.id === id)[0]);
+             return this.getPages()
+                 .then(pages => pages.filter(page => page.id === id)[0]);
+         }
+         
+         // UPDATE existing Page
+         private put(page: Page) {
+             let headers = new Headers();
+             headers.append('Content-Type',
+                            'application/json');
+
+             let url = `${this.pagesUrl}/${page.id}`;
+
+             return this.http
+                 .put(url, JSON.stringify(page),
+                      {headers: headers})
+                 .toPromise()
+                 .then(() => page)
+                 .catch(this.handleError);
+         }
+
+         // DESTROY existing Page
+         delete(page: Page) {
+             let headers = new Headers();
+             headers.append('Content-Type',
+                            'application/json');
+
+             let url = `${this.pagesUrl}/${page.id}`;
+
+             return this.http
+                 .delete(url, headers)
+                 .toPromise()
+                 .catch(this.handleError);
+         }
+
+         // SAVE combination of _post and _put methods
+         save(page: Page): Promise<Page> {
+             if (page.id) {
+                 return this.put(page);
+             }
+             return this.post(page);
+         }
+         
+         // handle ERRORS
+         private handleError(error: any) {
+             console.error('An error occurred', error);
+             return Promise.reject(error.message || error);
          }
      }
    #+end_src
 
-   #+NAME: mock-pages.ts
-   #+begin_src js :tangle app/mock-pages.ts :padline no
-     import { Page } from './page';
-
-     export var PAGES: Page[] = [
-         { "id": 1,  "title": "Home"       },
-         { "id": 2,  "title": "About"      },
-         { "id": 3,  "title": "Programs"   },
-         { "id": 4,  "title": "Tours"      },
-         { "id": 5,  "title": "Staff"      },
-         { "id": 6,  "title": "Calendar"   },
-         { "id": 7,  "title": "Employment" },
-         { "id": 8,  "title": "Donate"     },
-         { "id": 9,  "title": "Contact"    },
-         { "id": 10, "title": "Events"     }
-     ];
-   #+end_src
-
 * Template
 
-  NAV => [[App]] /
+  APP  => [[App]] /
+  SERV => [[page.service.ts]] /
+  COMP => [[page-detail.component.ts]] / [[pages.component.ts]]
+  TEMP => [[page-detail.component.html]]
 
   #+NAME: index.html
   #+begin_src web :tangle index.html :padline no
@@ -403,21 +543,48 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
     </html>
   #+end_src
 
+** Dashboard
+
+   NAV => [[dashboard.component.ts]] / [[pages.component.ts]] /
+
+   #+NAME: dashboard.component.html
+   #+begin_src web :tangle app/dashboard.component.html :padline no
+     <h3>Prairie Hill Pages (Spaces)</h3>
+     <div class="grid grid-pad">
+       <div *ngFor="let page of pages"
+            (click)="gotoDetail(page)" class="col-1-4">
+         <div class="module page">
+           <h4>{{page.title}}</h4>
+         </div>
+       </div>
+     </div>
+   #+end_src
+
 ** Pages
 
    #+NAME: pages.component.html
    #+begin_src web :tangle app/pages.component.html :padline no
-     <h2>Menu</h2>
+     <h2>My Pages</h2>
      <ul class="pages">
        <li *ngFor="let page of pages"
-           [class.selected]="page === selectedPage"
-           (click)="onSelect(page)">
-         <span class="badge">{{page.id}}</span> {{page.title}}
+           (click)="onSelect(page)"
+           [class.selected]="page === selectedPage">
+         <span class="page-element">
+           <span class="badge">{{page.id}}</span> {{page.title}}
+         </span>
+         <button class="delete-button"
+                 (click)="delete(page, $event)">Delete</button>
        </li>
      </ul>
+
+     <button (click)="addPage()">Add New Page</button>
+     <div *ngIf="addingPage">
+       <my-page-detail (close)="close($event)"></my-page-detail>
+     </div>
+
      <div *ngIf="selectedPage">
        <h2>
-         {{selectedPage.tite | uppercase}} is your current page
+         {{selectedPage.title | uppercase}} is your current page
        </h2>
        <button (click)="gotoDetail()">View Details</button>
      </div>
@@ -435,23 +602,7 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
          <input [(ngModel)]="page.title" placeholder="title"/>
        </div>
        <button (click)="goBack()">Back</button>
-     </div>
-   #+end_src
-
-** Dashboard
-
-   NAV => [[dashboard.component.ts]] / [[pages.component.ts]] /
-
-   #+NAME: dashboard.component.html
-   #+begin_src web :tangle app/dashboard.component.html :padline no
-     <h3>Prairie Hill Pages (Spaces)</h3>
-     <div class="grid grid-pad">
-       <div *ngFor="let page of pages"
-            (click)="gotoDetail(page)" class="col-1-4">
-         <div class="module page">
-           <h4>{{page.title}}</h4>
-         </div>
-       </div>
+       <button (click)="save()">Save</button>
      </div>
    #+end_src
 
@@ -501,7 +652,7 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
     }
   #+end_src
 
-  NAV => [[index.html]]
+  NAV => [[index.html]] / [[pages.component.html]] / [[pages.component.ts]]
 
   #+NAME: app.component.css
   #+begin_src css :tangle app/app.component.css :padline no
@@ -534,6 +685,72 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
       color: #039be5;
     }
   #+end_src
+  
+** Dashboard
+
+   #+NAME: dashboard.component.css
+   #+begin_src css :tangle app/dashboard.component.css :padline no
+     [class*='col-'] {
+       float: left;
+     }
+     ,*, *:after, *:before {
+         -webkit-box-sizing: border-box;
+         -moz-box-sizing: border-box;
+         box-sizing: border-box;
+     }
+     h3 {
+       text-align: center; margin-bottom: 0;
+     }
+     [class*='col-'] {
+       padding-right: 20px;
+       padding-bottom: 20px;
+     }
+     [class*='col-']:last-of-type {
+       padding-right: 0;
+     }
+     .grid {
+       margin: 0;
+     }
+     .col-1-4 {
+       width: 25%;
+     }
+     .module {
+         padding: 20px;
+         text-align: center;
+         color: #eee;
+         max-height: 120px;
+         min-width: 120px;
+         background-color: #607D8B;
+         border-radius: 2px;
+     }
+     h4 {
+       position: relative;
+     }
+     .module:hover {
+       background-color: #EEE;
+       cursor: pointer;
+       color: #607d8b;
+     }
+     .grid-pad {
+       padding: 10px 0;
+     }
+     .grid-pad > [class*='col-']:last-of-type {
+       padding-right: 20px;
+     }
+     @media (max-width: 600px) {
+         .module {
+           font-size: 10px;
+           max-height: 75px; }
+     }
+     @media (max-width: 1024px) {
+         .grid {
+           margin: 0;
+         }
+         .module {
+           min-width: 60px;
+         }
+     }
+   #+end_src
 
 ** Pages
 
@@ -619,72 +836,6 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
        background-color: #eee;
        color: #ccc; 
        cursor: auto;
-     }
-   #+end_src
-  
-** Dashboard
-
-   #+NAME: dashboard.component.css
-   #+begin_src css :tangle app/dashboard.component.css :padline no
-     [class*='col-'] {
-       float: left;
-     }
-     ,*, *:after, *:before {
-         -webkit-box-sizing: border-box;
-         -moz-box-sizing: border-box;
-         box-sizing: border-box;
-     }
-     h3 {
-       text-align: center; margin-bottom: 0;
-     }
-     [class*='col-'] {
-       padding-right: 20px;
-       padding-bottom: 20px;
-     }
-     [class*='col-']:last-of-type {
-       padding-right: 0;
-     }
-     .grid {
-       margin: 0;
-     }
-     .col-1-4 {
-       width: 25%;
-     }
-     .module {
-         padding: 20px;
-         text-align: center;
-         color: #eee;
-         max-height: 120px;
-         min-width: 120px;
-         background-color: #607D8B;
-         border-radius: 2px;
-     }
-     h4 {
-       position: relative;
-     }
-     .module:hover {
-       background-color: #EEE;
-       cursor: pointer;
-       color: #607d8b;
-     }
-     .grid-pad {
-       padding: 10px 0;
-     }
-     .grid-pad > [class*='col-']:last-of-type {
-       padding-right: 20px;
-     }
-     @media (max-width: 600px) {
-         .module {
-           font-size: 10px;
-           max-height: 75px; }
-     }
-     @media (max-width: 1024px) {
-         .grid {
-           margin: 0;
-         }
-         .module {
-           min-width: 60px;
-         }
      }
    #+end_src
 

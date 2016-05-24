@@ -11,29 +11,60 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var core_1 = require('@angular/core');
 var router_deprecated_1 = require('@angular/router-deprecated');
 var page_service_1 = require('./page.service');
+var page_detail_component_1 = require('./page-detail.component');
 var PagesComponent = (function () {
-    function PagesComponent(router, pageService) {
-        this.router = router;
-        this.pageService = pageService;
-        this.title = 'Prairie Hill Learning Center';
+    function PagesComponent(_router, _pageService) {
+        this._router = _router;
+        this._pageService = _pageService;
+        this.addingPage = false;
     }
     PagesComponent.prototype.getPages = function () {
         var _this = this;
-        this.pageService.getPages().then(function (pages) { return _this.pages = pages; });
+        this._pageService
+            .getPages()
+            .then(function (pages) { return _this.pages = pages; })
+            .catch(function (error) { return _this.error = error; }); //TODO: Display error message
+    };
+    PagesComponent.prototype.addPage = function () {
+        this.addingPage = true;
+        this.selectedPage = null;
+    };
+    PagesComponent.prototype.close = function (savedPage) {
+        this.addingPage = false;
+        if (savedPage) {
+            this.getPages();
+        }
+    };
+    PagesComponent.prototype.delete = function (page, event) {
+        var _this = this;
+        event.stopPropagation();
+        this._pageService
+            .delete(page)
+            .then(function (res) {
+            _this.pages = _this.pages.filter(function (h) { return h !== page; });
+            if (_this.selectedPage === page) {
+                _this.selectedPage = null;
+            }
+        })
+            .catch(function (error) { return _this.error = error; }); // TODO: Display error message
     };
     PagesComponent.prototype.ngOnInit = function () {
         this.getPages();
     };
-    PagesComponent.prototype.onSelect = function (page) { this.selectedPage = page; };
+    PagesComponent.prototype.onSelect = function (page) {
+        this.selectedPage = page;
+        this.addingPage = false;
+    };
     PagesComponent.prototype.gotoDetail = function () {
-        this.router.navigate(['PageDetail', {
+        this._router.navigate(['PageDetail', {
                 id: this.selectedPage.id }]);
     };
     PagesComponent = __decorate([
         core_1.Component({
             selector: 'my-pages',
             templateUrl: 'app/pages.component.html',
-            styleUrls: ['app/pages.component.css']
+            styleUrls: ['app/pages.component.css'],
+            directives: [page_detail_component_1.PageDetailComponent]
         }), 
         __metadata('design:paramtypes', [router_deprecated_1.Router, page_service_1.PageService])
     ], PagesComponent);

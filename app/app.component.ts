@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
 import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from '@angular/router-deprecated';
 
-import { PageService } from './page.service';
-import { PagesComponent } from './pages.component';
 import { DashboardComponent } from './dashboard.component';
-
+import { PagesComponent } from './pages.component';
 import { PageDetailComponent } from './page-detail.component';
+import { PageService } from './page.service';
 
 @Component({
     selector: 'my-app',
@@ -28,11 +27,6 @@ import { PageDetailComponent } from './page-detail.component';
 
 @RouteConfig([
     {
-        path: '/pages',
-        name: 'Pages',
-        component: PagesComponent
-    },
-    {
         path: '/dashboard',
         name: 'Dashboard',
         component: DashboardComponent,
@@ -42,6 +36,11 @@ import { PageDetailComponent } from './page-detail.component';
         path: '/detail/:id',
         name: 'PageDetail',
         component: PageDetailComponent
+    },
+    {
+        path: '/pages',
+        name: 'Pages',
+        component: PagesComponent
     }
 ])
 

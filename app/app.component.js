@@ -10,10 +10,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var core_1 = require('@angular/core');
 var router_deprecated_1 = require('@angular/router-deprecated');
-var page_service_1 = require('./page.service');
-var pages_component_1 = require('./pages.component');
 var dashboard_component_1 = require('./dashboard.component');
+var pages_component_1 = require('./pages.component');
 var page_detail_component_1 = require('./page-detail.component');
+var page_service_1 = require('./page.service');
 var AppComponent = (function () {
     function AppComponent() {
         this.title = 'Prairie Hill Learning Center';
@@ -31,11 +31,6 @@ var AppComponent = (function () {
         }),
         router_deprecated_1.RouteConfig([
             {
-                path: '/pages',
-                name: 'Pages',
-                component: pages_component_1.PagesComponent
-            },
-            {
                 path: '/dashboard',
                 name: 'Dashboard',
                 component: dashboard_component_1.DashboardComponent,
@@ -45,6 +40,11 @@ var AppComponent = (function () {
                 path: '/detail/:id',
                 name: 'PageDetail',
                 component: page_detail_component_1.PageDetailComponent
+            },
+            {
+                path: '/pages',
+                name: 'Pages',
+                component: pages_component_1.PagesComponent
             }
         ]), 
         __metadata('design:paramtypes', [])
