@@ -2,30 +2,73 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1. Config</a></li>
+<li><a href="#sec-1">1. Config</a>
+<ul>
+<li><a href="#sec-1-1">1.1. : package.json</a></li>
+<li><a href="#sec-1-2">1.2. : tsconfig.json</a></li>
+<li><a href="#sec-1-3">1.3. : typings.json</a></li>
+<li><a href="#sec-1-4">1.4. : systemjs.config.js</a></li>
+</ul>
+</li>
 <li><a href="#sec-2">2. App</a>
 <ul>
-<li><a href="#sec-2-1">2.1. Dashboard</a></li>
-<li><a href="#sec-2-2">2.2. Pages</a></li>
+<li><a href="#sec-2-1">2.1. : app/main.ts</a></li>
+<li><a href="#sec-2-2">2.2. : app/app.component.ts</a></li>
+<li><a href="#sec-2-3">2.3. : app/in-memory-data.service.ts</a></li>
+<li><a href="#sec-2-4">2.4. Dashboard</a>
+<ul>
+<li><a href="#sec-2-4-1">2.4.1. : app/dashboard.component.ts</a></li>
+</ul>
+</li>
+<li><a href="#sec-2-5">2.5. Pages</a>
+<ul>
+<li><a href="#sec-2-5-1">2.5.1. : app/page.ts</a></li>
+<li><a href="#sec-2-5-2">2.5.2. : app/pages.component.ts</a></li>
+<li><a href="#sec-2-5-3">2.5.3. : app/page-detail.component.ts</a></li>
+<li><a href="#sec-2-5-4">2.5.4. : app/page.service.ts</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#sec-3">3. Template</a>
 <ul>
-<li><a href="#sec-3-1">3.1. Dashboard</a></li>
-<li><a href="#sec-3-2">3.2. Pages</a></li>
+<li><a href="#sec-3-1">3.1. : index.html</a></li>
+<li><a href="#sec-3-2">3.2. Dashboard</a>
+<ul>
+<li><a href="#sec-3-2-1">3.2.1. : app/dashboard.component.html</a></li>
+</ul>
+</li>
+<li><a href="#sec-3-3">3.3. Pages</a>
+<ul>
+<li><a href="#sec-3-3-1">3.3.1. : app/pages.component.html</a></li>
+<li><a href="#sec-3-3-2">3.3.2. : app/page-detail.component.html</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#sec-4">4. Styles</a>
 <ul>
-<li><a href="#sec-4-1">4.1. Dashboard</a></li>
-<li><a href="#sec-4-2">4.2. Pages</a></li>
+<li><a href="#sec-4-1">4.1. : styles.css</a></li>
+<li><a href="#sec-4-2">4.2. : app/app.component.css</a></li>
+<li><a href="#sec-4-3">4.3. Dashboard</a>
+<ul>
+<li><a href="#sec-4-3-1">4.3.1. : app/dashboard.component.css</a></li>
+</ul>
+</li>
+<li><a href="#sec-4-4">4.4. Pages</a>
+<ul>
+<li><a href="#sec-4-4-1">4.4.1. : app/pages.component.css</a></li>
+<li><a href="#sec-4-4-2">4.4.2. : app/page-detail.component.css</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#sec-5">5. Dev</a>
 <ul>
-<li><a href="#sec-5-1">5.1. Sun May 22 14:10:19 CDT 2016</a></li>
-<li><a href="#sec-5-2">5.2. Sat May 21 22:28:33 CDT 2016</a></li>
-<li><a href="#sec-5-3">5.3. Tutorials</a></li>
+<li><a href="#sec-5-1">5.1. Mon May 23 21:42:18 CDT 2016</a></li>
+<li><a href="#sec-5-2">5.2. Sun May 22 14:10:19 CDT 2016</a></li>
+<li><a href="#sec-5-3">5.3. Sat May 21 22:28:33 CDT 2016</a></li>
+<li><a href="#sec-5-4">5.4. Tutorials</a></li>
 </ul>
 </li>
 </ul>
@@ -34,9 +77,13 @@
 
 **Prairie Hill Learning Center**
 
-NAV => 5 / 4 / / 3 / 2.1
+NAV => 5 / 4 / / 3 / 2.4
 
 # Config<a id="sec-1" name="sec-1"></a>
+
+## : package.json<a id="sec-1-1" name="sec-1-1"></a>
+
+    package.json
 
     {
       "name": "phill-angular2",
@@ -76,6 +123,10 @@ NAV => 5 / 4 / / 3 / 2.1
       }
     }
 
+## : tsconfig.json<a id="sec-1-2" name="sec-1-2"></a>
+
+    tsconfig.json
+
     {
       "compilerOptions": {
         "target": "es5",
@@ -94,6 +145,10 @@ NAV => 5 / 4 / / 3 / 2.1
       ]
     }
 
+## : typings.json<a id="sec-1-3" name="sec-1-3"></a>
+
+    typings.json
+
     {
       "ambientDependencies": {
         "core-js": "registry:dt/core-js#0.0.0+20160317120654",
@@ -101,6 +156,10 @@ NAV => 5 / 4 / / 3 / 2.1
         "node": "registry:dt/node#4.0.0+20160509154515"
       }
     }
+
+## : systemjs.config.js<a id="sec-1-4" name="sec-1-4"></a>
+
+    systemjs.config.js
 
     /**
      * System configuration for Angular 2 samples
@@ -144,7 +203,11 @@ NAV => 5 / 4 / / 3 / 2.1
 
 # App<a id="sec-2" name="sec-2"></a>
 
-NAV => / 5 / 4 / 3 / 2.1
+NAV => / 5 / 4 / 3 / 2.4
+
+## : app/main.ts<a id="sec-2-1" name="sec-2-1"></a>
+
+    app/main.ts
 
     // TEMP: Imports for loading & configuring the in-memory web api
     import { provide } from '@angular/core';
@@ -166,6 +229,10 @@ NAV => / 5 / 4 / 3 / 2.1
             useClass: InMemoryDataService }) // in-mem server data
     ]);
 
+## : app/app.component.ts<a id="sec-2-2" name="sec-2-2"></a>
+
+    app/app.component.ts
+
     import { Component } from '@angular/core';
     import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from '@angular/router-deprecated';
     
@@ -180,6 +247,7 @@ NAV => / 5 / 4 / 3 / 2.1
         template: `
             <h1>{{title}}</h1>
             <nav>
+    
               <a [routerLink]="['Dashboard']">Dashboard</a>
               <a [routerLink]="['Pages']">Pages</a>
             </nav>
@@ -216,6 +284,21 @@ NAV => / 5 / 4 / 3 / 2.1
         title = 'Prairie Hill Learning Center';
     }
 
+    <a [routerLink]="['Home']">Home</a>
+    <a [routerLink]="['About']">About</a>
+    <a [routerLink]="['Programs']">Programs</a>
+    <a [routerLink]="['Tours']">Tours</a>
+    <a [routerLink]="['Staff']">Staff</a>
+    <a [routerLink]="['Calendar']">Calendar</a>
+    <a [routerLink]="['Employment']">Employment</a>
+    <a [routerLink]="['Donate']">Donate</a>
+    <a [routerLink]="['Contact']">Contact</a>
+    <a [routerLink]="['Events']">Events</a>
+
+## : app/in-memory-data.service.ts<a id="sec-2-3" name="sec-2-3"></a>
+
+    app/in-memory-data.service.ts
+
     export class InMemoryDataService {
       createDb() {
         let pages = [
@@ -234,10 +317,14 @@ NAV => / 5 / 4 / 3 / 2.1
       }
     }
 
-## Dashboard<a id="sec-2-1" name="sec-2-1"></a>
+## Dashboard<a id="sec-2-4" name="sec-2-4"></a>
 
 NAV => 6 / 14 / 21
 => 18 / 19 
+
+### : app/dashboard.component.ts<a id="sec-2-4-1" name="sec-2-4-1"></a>
+
+    app/dashboard.component.ts
 
     import { Component, OnInit } from '@angular/core';
     
@@ -272,17 +359,25 @@ NAV => 6 / 14 / 21
         }
     }
 
-## Pages<a id="sec-2-2" name="sec-2-2"></a>
+## Pages<a id="sec-2-5" name="sec-2-5"></a>
 
 TEMP => 14 / 16 / 15
 SERV => 12 
 COMP => 11 / 10 / 8
 STYL => 20 /
 
+### : app/page.ts<a id="sec-2-5-1" name="sec-2-5-1"></a>
+
+    app/page.ts
+
     export class Page {
         id: number;
         title: string;
     }
+
+### : app/pages.component.ts<a id="sec-2-5-2" name="sec-2-5-2"></a>
+
+    app/pages.component.ts
 
     import { Component, OnInit } from '@angular/core';
     import { Router } from '@angular/router-deprecated';
@@ -352,6 +447,10 @@ STYL => 20 /
         }
     }
 
+### : app/page-detail.component.ts<a id="sec-2-5-3" name="sec-2-5-3"></a>
+
+    app/page-detail.component.ts
+
     import { Component, Input, Output, OnInit, EventEmitter } from '@angular/core';
     import { RouteParams } from '@angular/router-deprecated';
     
@@ -404,6 +503,10 @@ STYL => 20 /
             }
         }
     }
+
+### : app/page.service.ts<a id="sec-2-5-4" name="sec-2-5-4"></a>
+
+    app/page.service.ts
 
     import { Injectable } from '@angular/core';
     import { Http, Headers } from '@angular/http';
@@ -497,6 +600,10 @@ SERV => 12 /
 COMP => 11 / 10
 TEMP => 16
 
+## : index.html<a id="sec-3-1" name="sec-3-1"></a>
+
+    index.html
+
     <html>
       <head>
         <base href="/">
@@ -537,9 +644,13 @@ TEMP => 16
       </body>
     </html>
 
-## Dashboard<a id="sec-3-1" name="sec-3-1"></a>
+## Dashboard<a id="sec-3-2" name="sec-3-2"></a>
 
 NAV => 8 / 10 /
+
+### : app/dashboard.component.html<a id="sec-3-2-1" name="sec-3-2-1"></a>
+
+    app/dashboard.component.html
 
     <h3>Prairie Hill Pages (Spaces)</h3>
     <div class="grid grid-pad">
@@ -551,7 +662,11 @@ NAV => 8 / 10 /
       </div>
     </div>
 
-## Pages<a id="sec-3-2" name="sec-3-2"></a>
+## Pages<a id="sec-3-3" name="sec-3-3"></a>
+
+### : app/pages.component.html<a id="sec-3-3-1" name="sec-3-3-1"></a>
+
+    app/pages.component.html
 
     <h2>My Pages</h2>
     <ul class="pages">
@@ -578,6 +693,10 @@ NAV => 8 / 10 /
       <button (click)="gotoDetail()">View Details</button>
     </div>
 
+### : app/page-detail.component.html<a id="sec-3-3-2" name="sec-3-3-2"></a>
+
+    app/page-detail.component.html
+
     <div *ngIf="page">
       <h2>{{page.title}}</h2>
       <div>
@@ -594,6 +713,10 @@ NAV => 8 / 10 /
 # Styles<a id="sec-4" name="sec-4"></a>
 
 5 / 2
+
+## : styles.css<a id="sec-4-1" name="sec-4-1"></a>
+
+    styles.css
 
     h1 {
       color: #369;
@@ -636,6 +759,10 @@ NAV => 8 / 10 /
 
 NAV => 13 / 15 / 10
 
+## : app/app.component.css<a id="sec-4-2" name="sec-4-2"></a>
+
+    app/app.component.css
+
     h1 {
       font-size: 1.2em;
       color: #999;
@@ -665,7 +792,11 @@ NAV => 13 / 15 / 10
       color: #039be5;
     }
 
-## Dashboard<a id="sec-4-1" name="sec-4-1"></a>
+## Dashboard<a id="sec-4-3" name="sec-4-3"></a>
+
+### : app/dashboard.component.css<a id="sec-4-3-1" name="sec-4-3-1"></a>
+
+    app/dashboard.component.css
 
     [class*='col-'] {
       float: left;
@@ -728,7 +859,11 @@ NAV => 13 / 15 / 10
         }
     }
 
-## Pages<a id="sec-4-2" name="sec-4-2"></a>
+## Pages<a id="sec-4-4" name="sec-4-4"></a>
+
+### : app/pages.component.css<a id="sec-4-4-1" name="sec-4-4-1"></a>
+
+    app/pages.component.css
 
     .selected {
         background-color: #CFD8DC !important;
@@ -778,6 +913,10 @@ NAV => 13 / 15 / 10
         border-radius: 4px 0 0 4px;
     }
 
+### : app/page-detail.component.css<a id="sec-4-4-2" name="sec-4-4-2"></a>
+
+    app/page-detail.component.css
+
     label {
       display: inline-block;
       width: 3em;
@@ -810,7 +949,9 @@ NAV => 13 / 15 / 10
 
 # Dev<a id="sec-5" name="sec-5"></a>
 
-## Sun May 22 14:10:19 CDT 2016<a id="sec-5-1" name="sec-5-1"></a>
+## Mon May 23 21:42:18 CDT 2016<a id="sec-5-1" name="sec-5-1"></a>
+
+## Sun May 22 14:10:19 CDT 2016<a id="sec-5-2" name="sec-5-2"></a>
 
 <https://angular.io/docs/ts/latest/tutorial/toh-pt5.html>
 
@@ -822,7 +963,7 @@ Routing
 -   [ ] create a new
 -   [ ] tie the *Dashboard* into the navigation structure
 
-## Sat May 21 22:28:33 CDT 2016<a id="sec-5-2" name="sec-5-2"></a>
+## Sat May 21 22:28:33 CDT 2016<a id="sec-5-3" name="sec-5-3"></a>
 
 <https://angular.io/docs/js/latest/quickstart.html>
 
@@ -900,7 +1041,7 @@ Angular2 is written with TypeScript(ES6). This is the future.
     
         npm start
 
-## Tutorials<a id="sec-5-3" name="sec-5-3"></a>
+## Tutorials<a id="sec-5-4" name="sec-5-4"></a>
 
 <https://angular.io/docs/ts/latest/tutorial/toh-pt3.html>
 

@@ -12,6 +12,7 @@ import { PageService } from './page.service';
     template: `
         <h1>{{title}}</h1>
         <nav>
+        
           <a [routerLink]="['Dashboard']">Dashboard</a>
           <a [routerLink]="['Pages']">Pages</a>
         </nav>

@@ -4,6 +4,8 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
 
 * Config
 
+**  : package.json
+  : package.json
   #+NAME: package.json
   #+begin_src js :tangle package.json :padline no
     {
@@ -45,6 +47,8 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
     }
   #+end_src
 
+**  : tsconfig.json
+  : tsconfig.json
   #+NAME: tsconfig.json
   #+begin_src js :tangle tsconfig.json :padline no
     {
@@ -66,6 +70,8 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
     }
   #+end_src
 
+**  : typings.json
+  : typings.json
   #+NAME: typings.json
   #+begin_src js :tangle typings.json :padline no
     {
@@ -77,6 +83,8 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
     }
   #+end_src
 
+**  : systemjs.config.js
+  : systemjs.config.js
   #+NAME: systemjs.config.js
   #+begin_src js :tangle systemjs.config.js :padline no
     /**
@@ -124,6 +132,8 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
 
   NAV => [[Index]] / [[Dev]] / [[Styles]] / [[Template]] / [[Dashboard]]
 
+**  : app/main.ts
+  : app/main.ts
   #+NAME: main.ts
   #+begin_src js :tangle app/main.ts :padline no
     // TEMP: Imports for loading & configuring the in-memory web api
@@ -147,6 +157,8 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
     ]);
   #+end_src
 
+**  : app/app.component.ts
+  : app/app.component.ts
   #+NAME: app.component.ts
   #+begin_src js :tangle app/app.component.ts :padline no
     import { Component } from '@angular/core';
@@ -163,6 +175,7 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
         template: `
             <h1>{{title}}</h1>
             <nav>
+            
               <a [routerLink]="['Dashboard']">Dashboard</a>
               <a [routerLink]="['Pages']">Pages</a>
             </nav>
@@ -200,6 +213,19 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
     }
   #+end_src
 
+  : <a [routerLink]="['Home']">Home</a>
+  : <a [routerLink]="['About']">About</a>
+  : <a [routerLink]="['Programs']">Programs</a>
+  : <a [routerLink]="['Tours']">Tours</a>
+  : <a [routerLink]="['Staff']">Staff</a>
+  : <a [routerLink]="['Calendar']">Calendar</a>
+  : <a [routerLink]="['Employment']">Employment</a>
+  : <a [routerLink]="['Donate']">Donate</a>
+  : <a [routerLink]="['Contact']">Contact</a>
+  : <a [routerLink]="['Events']">Events</a>
+
+**  : app/in-memory-data.service.ts
+  : app/in-memory-data.service.ts
   #+NAME: in-memory-data.service.ts
   #+begin_src js :tangle app/in-memory-data.service.ts :padline no
     export class InMemoryDataService {
@@ -226,6 +252,8 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
    NAV => [[app.component.ts]] / [[dashboard.component.html]] / [[page-detail.component.css]]
    => [[app.component.css]] / [[dashboard.component.css]] 
 
+***   : app/dashboard.component.ts
+   : app/dashboard.component.ts
    #+NAME: dashboard.component.ts
    #+begin_src js :tangle app/dashboard.component.ts :padline no
      import { Component, OnInit } from '@angular/core';
@@ -264,12 +292,13 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
 
 ** Pages
 
-   #+NAME: NAV
    TEMP => [[dashboard.component.html]] / [[page-detail.component.html]] / [[pages.component.html]]
    SERV => [[page.service.ts]] 
    COMP => [[page-detail.component.ts]] / [[pages.component.ts]] / [[dashboard.component.ts]]
    STYL => [[pages.component.css]] /
 
+***   : app/page.ts
+   : app/page.ts
    #+NAME: page.ts
    #+begin_src js :tangle app/page.ts :padline no
      export class Page {
@@ -278,6 +307,8 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
      }
    #+end_src
 
+***   : app/pages.component.ts
+   : app/pages.component.ts
    #+NAME: pages.component.ts
    #+begin_src js :tangle app/pages.component.ts :padline no
      import { Component, OnInit } from '@angular/core';
@@ -349,6 +380,8 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
      }
    #+end_src
 
+***   : app/page-detail.component.ts
+   : app/page-detail.component.ts
    #+NAME: page-detail.component.ts
    #+begin_src js :tangle app/page-detail.component.ts :padline no
      import { Component, Input, Output, OnInit, EventEmitter } from '@angular/core';
@@ -405,6 +438,8 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
      }
    #+end_src
 
+***   : app/page.service.ts
+   : app/page.service.ts
    #+NAME: page.service.ts
    #+begin_src js :tangle app/page.service.ts :padline no
      import { Injectable } from '@angular/core';
@@ -500,6 +535,8 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
   COMP => [[page-detail.component.ts]] / [[pages.component.ts]]
   TEMP => [[page-detail.component.html]]
 
+**  : index.html
+  : index.html
   #+NAME: index.html
   #+begin_src web :tangle index.html :padline no
     <html>
@@ -547,6 +584,8 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
 
    NAV => [[dashboard.component.ts]] / [[pages.component.ts]] /
 
+***   : app/dashboard.component.html
+   : app/dashboard.component.html
    #+NAME: dashboard.component.html
    #+begin_src web :tangle app/dashboard.component.html :padline no
      <h3>Prairie Hill Pages (Spaces)</h3>
@@ -562,6 +601,8 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
 
 ** Pages
 
+***   : app/pages.component.html
+   : app/pages.component.html
    #+NAME: pages.component.html
    #+begin_src web :tangle app/pages.component.html :padline no
      <h2>My Pages</h2>
@@ -590,6 +631,8 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
      </div>
    #+end_src
 
+***   : app/page-detail.component.html
+   : app/page-detail.component.html
    #+NAME: page-detail.component.html
    #+begin_src web :tangle app/page-detail.component.html :padline no
      <div *ngIf="page">
@@ -610,6 +653,8 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
 
   [[Dev]] / [[App]]
 
+**  : styles.css
+  : styles.css
   #+NAME: styles.css
   #+begin_src css :tangle styles.css :padline no
     h1 {
@@ -654,6 +699,8 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
 
   NAV => [[index.html]] / [[pages.component.html]] / [[pages.component.ts]]
 
+**  : app/app.component.css
+  : app/app.component.css
   #+NAME: app.component.css
   #+begin_src css :tangle app/app.component.css :padline no
     h1 {
@@ -688,6 +735,8 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
   
 ** Dashboard
 
+***   : app/dashboard.component.css
+   : app/dashboard.component.css
    #+NAME: dashboard.component.css
    #+begin_src css :tangle app/dashboard.component.css :padline no
      [class*='col-'] {
@@ -754,6 +803,8 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
 
 ** Pages
 
+***   : app/pages.component.css
+   : app/pages.component.css
    #+NAME: pages.component.css
    #+begin_src css :tangle app/pages.component.css
      .selected {
@@ -806,6 +857,8 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
 
    #+end_src
 
+***   : app/page-detail.component.css
+   : app/page-detail.component.css
    #+NAME: page-detail.component.css
    #+begin_src css :tangle app/page-detail.component.css
      label {
@@ -840,6 +893,10 @@ NAV => [[Dev]] / [[Styles]] / [[Index]] / [[Template]] / [[Dashboard]]
    #+end_src
 
 * Dev
+
+** Mon May 23 21:42:18 CDT 2016
+
+   
 
 ** Sun May 22 14:10:19 CDT 2016
 
